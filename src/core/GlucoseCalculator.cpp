@@ -1,5 +1,5 @@
-#include "GlucoseCalculator.h"
-#include "config.h" // 引入配置文件以使用校准参数
+#include <GlucoseCalculator.h>
+#include <config.h> // 引入配置文件以使用校准参数
 
 // 获取单例实例
 GlucoseCalculator& GlucoseCalculator::getInstance() {

@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "config.h"
-#include "core/GlucoseCalculator.h"
-#include "prediction/GlucosePredictor.h" // <-- 引入预测器
+#include <GlucoseCalculator.h>
+#include <GlucosePredictor.h> // <-- 引入预测器
 
 void setup() {
   Serial.begin(SERIAL_BAUD_RATE);

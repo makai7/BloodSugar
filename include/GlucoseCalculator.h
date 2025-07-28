@@ -1,9 +1,9 @@
 #ifndef GLUCOSE_CALCULATOR_H
 #define GLUCOSE_CALCULATOR_H
 
-#include "hal/SignalReader.h"
-#include "hal/Dht22Controller.h"
-#include "hal/Max30102Controller.h"
+#include "SignalReader.h"
+#include "Dht22Controller.h"
+#include "Max30102Controller.h"
 // 注意：我们暂时还没有创建DemodulatorController，所以先不包含它
 
 /**

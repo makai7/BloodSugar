@@ -1,4 +1,4 @@
-#include "Max30102Controller.h"
+#include <Max30102Controller.h>
 
 // 获取单例实例
 Max30102Controller& Max30102Controller::getInstance() {

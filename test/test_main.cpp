@@ -2,11 +2,11 @@
 #include <unity.h> // PlatformIO的单元测试框架
 
 // 包含所有需要测试的硬件抽象层模块
-#include "hal/LedController.h"
-#include "hal/DemodulatorController.h"
-#include "hal/SignalReader.h"
-#include "hal/Dht22Controller.h"
-#include "hal/Max30102Controller.h"
+#include <LedController.h>
+#include <DemodulatorController.h>
+#include <SignalReader.h>
+#include <Dht22Controller.h>
+#include <Max30102Controller.h>
 
 // setUp 和 tearDown 是可选的，它们分别在每个测试用例之前和之后运行
 void setUp(void) {

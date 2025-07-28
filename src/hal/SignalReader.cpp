@@ -1,4 +1,4 @@
-#include "SignalReader.h"
+#include <SignalReader.h>
 
 // 获取单例实例
 SignalReader& SignalReader::getInstance() {
