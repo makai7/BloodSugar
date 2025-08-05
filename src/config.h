@@ -76,7 +76,7 @@
 #define ADC_SAMPLES_TO_AVERAGE 64
 // ADC衰减配置。运放输出范围为0-3.3V，因此11dB衰减是合适的。
 // 这使得ADC的测量范围约为 0V - 3.3V。
-#define ADC_ATTENUATION ADC_ATTEN_DB_11
+#define ADC_ATTENUATION ADC_11db
 
 
 // =================================================================

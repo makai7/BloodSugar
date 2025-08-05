@@ -3,6 +3,9 @@
 #include <GlucoseCalculator.h>
 #include <GlucosePredictor.h> // <-- 引入预测器
 
+#include "LedController.h"
+#include "DemodulatorController.h"
+
 void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
   Serial.println("\n--- Non-invasive Glucose Monitor with Prediction ---");

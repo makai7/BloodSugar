@@ -37,7 +37,7 @@ bool Max30102Controller::begin() {
     // 采样率: 100 samples per second
     // 脉冲宽度: 411 microseconds
     // ADC范围: 4096
-    _particleSensor.setup(4096, 4, 100, 411);
+    _particleSensor.setup();      //默认参数测试
 
     return true;
 }
@@ -51,8 +51,9 @@ void Max30102Controller::update() {
     if (_particleSensor.available()) {
         _irValue = _particleSensor.getIR();
         // 库内部会自动计算心率和血氧，但需要一定数量的样本后才稳定
-        _heartRate = _particleSensor.getHeartRate();
-        _spO2 = _particleSensor.getSpO2();
+        // _heartRate = _particleSensor.getHeartRate();
+        // _spO2 = _particleSensor.getSpO2();
+        //修复编译错误，暂时禁用这两个不存在的函数调用
 
         // 读取下一个样本，为下一次available()做准备
         _particleSensor.nextSample();
