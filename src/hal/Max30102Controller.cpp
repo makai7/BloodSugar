@@ -10,54 +10,46 @@ Max30102Controller& Max30102Controller::getInstance() {
 Max30102Controller::Max30102Controller() :
     _heartRate(0.0f),
     _spO2(0.0f),
-    _irValue(0)
+    _irValue(0),
+    _redValue(0)
 {
 }
 
 bool Max30102Controller::begin() {
-    // 初始化I2C总线 (如果之前没有初始化过)
-    // Wire.begin(PIN_I2C_SDA, PIN_I2C_SCL, I2C_CLOCK_SPEED);
-    // 注意: 通常I2C总线在main.cpp中统一初始化一次即可。
-    // 这里假设外部已调用Wire.begin()。
-
-    // 初始化传感器
     if (!_particleSensor.begin(Wire, I2C_CLOCK_SPEED)) {
-        return false; // 传感器未找到
+        return false;
     }
+    
+    // Configure sensor settings for SpO2 calculation
+    uint8_t sampleAverage = 4;      // Options: 1, 2, 4, 8, 16, 32
+    uint8_t ledMode = 2;            // Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green. We need 2.
+    uint16_t sampleRate = 100;      // Options: 50, 100, 200, 400... Must match FS in algorithm.
+    uint16_t pulseWidth = 411;      // Options: 69, 118, 215, 411. This fixes the warning.
+    uint16_t adcRange = 4096;       // Options: 2048, 4096, 8192, 16384
+    uint8_t ledBrightness = 0x24;   // A good starting point (~7mA). Range: 0-255.
 
-    // --- 配置传感器 ---
-    // 这些设置是获得良好读数的关键，可能需要根据实际情况微调
-
-    // 设置LED电流 (可接受范围: 0-255, 对应 0-50mA)
-    // 一个经验值是从较低的电流开始，如 7mA (对应约35)
-    _particleSensor.setPulseAmplitudeRed(0x24); // 红色LED电流
-    _particleSensor.setPulseAmplitudeIR(0x24);  // 红外LED电流
-
-    // 设置采样率和脉冲宽度
-    // 采样率: 100 samples per second
-    // 脉冲宽度: 411 microseconds
-    // ADC范围: 4096
-    _particleSensor.setup();      //默认参数测试
+    _particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange);
+    
+    // It's good practice to clear the FIFO buffer before starting measurements
+    _particleSensor.clearFIFO(); 
 
     return true;
 }
 
 void Max30102Controller::update() {
-    // 从传感器FIFO缓冲区检查并读取数据
-    // 这个函数应该在loop中被频繁调用
-    _particleSensor.check(); 
+    // Check the sensor for new data
+    _particleSensor.check();
 
-    // 只有当有新样本被处理时，才更新我们的值
-    if (_particleSensor.available()) {
+    // Process all available samples from the FIFO buffer
+    while (_particleSensor.available()) {
         _irValue = _particleSensor.getIR();
-        // 库内部会自动计算心率和血氧，但需要一定数量的样本后才稳定
-        // _heartRate = _particleSensor.getHeartRate();
-        // _spO2 = _particleSensor.getSpO2();
-        //修复编译错误，暂时禁用这两个不存在的函数调用
-
-        // 读取下一个样本，为下一次available()做准备
+        _redValue = _particleSensor.getRed();
+        _spo2_calculator.update(_irValue, _redValue);
         _particleSensor.nextSample();
     }
+
+    _heartRate = _spo2_calculator.get_heart_rate();
+    _spO2 = _spo2_calculator.get_spo2();
 }
 
 float Max30102Controller::getHeartRate() {
@@ -73,6 +65,7 @@ uint32_t Max30102Controller::getIRValue() {
 }
 
 bool Max30102Controller::isFingerDetected() {
-    // 通常IR值大于一个阈值（例如50000）可以认为有手指存在
+    // A simple check. For a real product, a more robust finger detection
+    // algorithm would be needed (e.g., checking signal quality).
     return (_irValue > 50000);
 }

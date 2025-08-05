@@ -4,6 +4,7 @@
 #include "config.h"
 #include <Wire.h>
 #include "MAX30105.h" // 库名是MAX30105，但它完美兼容MAX30102
+#include "spo2_algorithm.h"
 
 /**
  * @class Max30102Controller
@@ -66,10 +67,12 @@ private:
     Max30102Controller();
 
     MAX30105 _particleSensor; // 来自库的传感器对象
+    SpO2Algorithm _spo2_calculator;
 
     float _heartRate; // 缓存的心率
     float _spO2;      // 缓存的血氧
     uint32_t _irValue; // 缓存的IR值
+    uint32_t _redValue;
 };
 
 #endif // MAX30102_CONTROLLER_H
